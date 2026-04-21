@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Someone Special</title>
+    <style>
+        :root {
+            --primary-pink: #ff4d6d;
+            --soft-pink: #fff0f3;
+            --dark-pink: #c9184a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--soft-pink);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h1 { color: var(--primary-pink); }
+        
+        .challenge-box {
+            background: var(--soft-pink);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px dashed var(--primary-pink);
+        }
+
+        .compliment-list {
+            display: none;
+            text-align: left;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+        }
+
+        .compliment-item {
+            padding: 10px;
+            border-bottom: 1px solid #ffe5ec;
+            font-size: 0.95rem;
+        }
+
+        .compliment-item span {
+            font-weight: bold;
+            color: var(--dark-pink);
+            display: block;
+        }
+
+        button {
+            background-color: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: var(--dark-pink);
+            transform: scale(1.05);
+        }
+
+        .progress {
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--primary-pink);
+        }
+
+        #heart-minigame {
+            display: none;
+            height: 100px;
+            position: relative;
+            background: #fff;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        #moving-heart {
+            position: absolute;
+            cursor: pointer;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>To My Favorite Human 💖</h1>
+    <p>Complete the challenges to unlock your 100 compliments.</p>
+    
+    <div class="progress">Challenge: <span id="current-step">1</span> / 10</div>
+
+    <div class="challenge-box" id="challenge-container">
+        <h3 id="challenge-text">Challenge 1: Drink some water and stay hydrated! 💧</h3>
+        <div id="heart-minigame">
+            <span id="moving-heart">❤️</span>
+        </div>
+        <button onclick="nextChallenge()" id="action-btn">Done!</button>
+    </div>
+
+    <div id="compliments" class="compliment-list">
+        <h3>✨ 100 Reasons Why You're Amazing ✨</h3>
+        </div>
+</div>
+
+<script>
+    const compliments = [
+        "The one with the goated taste", "The best cook in all blue", "The best hmm speaker",
+        "The best blusher for me", "The best slap that sends me spinning", "The one with various recipes",
+        "My favorite kind of trouble:)", "Brighter than the sunshine", "Brighter than the moon",
+        "As cute as cat to a animal lover", "The reason I smile at everything", "Only video I wanna watch on repeat",
+        "As beautiful as a group of the best flowers", "A shine that surpass the stars", "The reason I smile at my phone like an idiot",
+        "As bold as a diamond", "My best thought", "The most bravest", "The most strongest", "My favourite plot",
+        "My favourite plot twist", "The best goal to score", "My favourite last thought of the day", "My favourite first thought as I wake up",
+        "My Strawhat", "Simply the best", "The best hours, minutes, seconds of the day", "The one with the words that I wanna hear every movement",
+        "The reason I feel butterflies in my stomach", "The reason my brain has electric currents", "The best good-morning text sender",
+        "The best good-night text sender", "The one with the goated recommendations for everything", "The one that makes me blush",
+        "Best laugh that I can hear on loop", "A masterpiece of an artist", "Colder than the ice", "Hotter than the sun",
+        "As fast as a wind", "The spring to my autumn", "The soft haa to my loud head", "My favorite kind of silence",
+        "The best story I have ever read", "The one I wanna exaust all my luck into", "The Saturday's to the Sunday's",
+        "The one that makes living bearable", "The reason colours are a feeling", "The void I wanna dive in",
+        "My favorite across every universe", "The one that makes me go blank", "The one I wanna dedicate every nice songs to",
+        "The best miracle that ever happened to me", "My piston cup", "The one that makes me wanna go to the upside down",
+        "The best coffee maker of all time", "my favorite kind of gravity;)", "The magnet to my eyes", "My favourite ha-ha thik hai",
+        "The best handwriting critic (you're definitely biased)", "The best learner", "Best writer", "My favourite kind of loud",
+        "My favourite kind of Chaos", "The one that makes me wanna lookup to the sky's", "My most repeated daydream",
+        "The Beats of a goated soundtrack", "The one with the most melodical voice", "my favorite kind of interruption;)",
+        "The best kind of reactions", "The best kind of expressions", "As explosive as godzilla's atomic breath",
+        "As stunning as optimus prime's speeches", "My Wakanda forever", "The one that confuses me the most",
+        "The best vibes", "my personal favorite human bein", "The most beautiful among all multiverse's",
+        "As magical as Dr strange's magic", "The best spiderwomen under the mask", "My most favourite thing to look at",
+        "The one with eyes like the Pacific Ocean", "The one with the prettiest pair of hands", "The one with the best hair flicks",
+        "My favourite kind of kyaa??!!", "Best snap sender", "The best reels sender", "The best pinterest shares",
+        "Sometimes the Dumbo!!", "My best kind of movie or series to watch", "Webs to my webswings", "My favourite notification",
+        "My first priority", "Shakespeare to quotes", "The one with the best eye rools", "My favourite kind of bump in a road",
+        "So kind and thoughtful", "The most important", "my favorite chapter of every day:)", "The reason love contains an e and an l",
+        "The Arc reactor to me"
+    ];
+
+    const challenges = [
+        "Drink water and stay hydrated! 💧",
+        "Go eat a piece of chocolate! 🍫",
+        "Try to blush just a little bit... 😊",
+        "Smile for 11 seconds straight! (I'm counting!) ⏱️",
+        "Think of your absolute best memory... 💭",
+        "Look in a mirror and say: 'I love myself!' 🗣️",
+        "Stand up and stretch a little! 🙆‍♀️",
+        "Catch the heart! (Click the heart below)",
+        "Tap the button 10 times to increase heartbeats! ❤️",
+        "Last step: Unlock the vault of compliments! 🔓"
+    ];
+
+    let currentStep = 0;
+    let tapCount = 0;
+
+    function nextChallenge() {
+        if (currentStep === 7) { // Catch the heart
+            document.getElementById('heart-minigame').style.display = 'block';
+            document.getElementById('action-btn').style.display = 'none';
+            moveHeart();
+            return;
+        }
+
+        if (currentStep === 8) { // Tap heartbeats
+            tapCount++;
+            document.getElementById('action-btn').innerText = `Taps: ${tapCount} / 10`;
+            if (tapCount < 10) return;
+        }
+
+        currentStep++;
+        
+        if (currentStep < challenges.length) {
+            updateUI();
+        } else {
+            showCompliments();
+        }
+    }
+
+    function updateUI() {
+        document.getElementById('current-step').innerText = currentStep + 1;
+        document.getElementById('challenge-text').innerText = `Challenge ${currentStep + 1}: ${challenges[currentStep]}`;
+        document.getElementById('action-btn').innerText = "Done!";
+        document.getElementById('action-btn').style.display = 'inline-block';
+        document.getElementById('heart-minigame').style.display = 'none';
+    }
+
+    function moveHeart() {
+        const heart = document.getElementById('moving-heart');
+        heart.style.left = Math.random() * 80 + '%';
+        heart.style.top = Math.random() * 60 + 'px';
+        heart.onclick = () => {
+            currentStep++;
+            updateUI();
+        };
+    }
+
+    function showCompliments() {
+        document.getElementById('challenge-container').style.display = 'none';
+        const list = document.getElementById('compliments');
+        list.style.display = 'block';
+        
+        compliments.forEach((text, i) => {
+            const item = document.createElement('div');
+            item.className = 'compliment-item';
+            item.innerHTML = `<span>#${i + 1} You are...</span> ${text}`;
+            list.appendChild(item);
+        });
+        
+        document.querySelector('h1').innerText = "All Unlocked! ❤️";
+    }
+</script>
+
+</body>
+</html>
